@@ -37,7 +37,7 @@ data class License(
         var name_id: String
 ): Serializable
 
-data class Repos(
+data class Repo(
         var id: Long,
         var node_id: String,
         var name: String,
