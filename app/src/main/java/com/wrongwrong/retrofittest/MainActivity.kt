@@ -14,18 +14,22 @@ import retrofit2.http.Path
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
+    interface IGetRepos{
+        @GET("{id}/repos")
+        fun getRepos(@Path("id") userID : String) : Call<List<Repo>>
+    }
+
+    private val retrofit: Retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().serializeNulls().create()))
+            .baseUrl("https://api.github.com/users/")
+            .build()
+    private val service: IGetRepos = retrofit.create(IGetRepos::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val gson = GsonBuilder().serializeNulls().create()
-        var retrofit: Retrofit = Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl("https://api.github.com/users/")
-                .build()
-        var service = retrofit.create(IGetRepos::class.java)
-        var call = service.GetRepos("k163377")
+        val call = service.getRepos("k163377")
         call.enqueue(object : Callback<List<Repo>> {
             override fun onResponse(call: Call<List<Repo>>?, response: Response<List<Repo>>?) {
                 try{
@@ -40,10 +44,5 @@ class MainActivity : AppCompatActivity() {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })
-    }
-
-    interface IGetRepos{
-        @GET("{id}/repos")
-        fun GetRepos(@Path("id") userID : String) : Call<List<Repo>>
     }
 }
