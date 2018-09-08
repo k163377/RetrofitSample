@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,7 +21,13 @@ class MainActivity : AppCompatActivity() {
         fun getRepos(@Path("id") userID : String) : Call<List<Repo>>
     }
 
+    private val client: OkHttpClient = OkHttpClient
+            .Builder()
+            .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            .build()
+
     private val retrofit: Retrofit = Retrofit.Builder()
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().serializeNulls().create()))
             .baseUrl("https://api.github.com/users/")
             .build()
